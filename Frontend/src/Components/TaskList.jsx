@@ -4,7 +4,6 @@ import { useState } from "react";
 
 function TaskList() {
   const [todos, setTodos] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
 
   const FetchTasks = async () => {
     try {
@@ -17,13 +16,13 @@ function TaskList() {
     }
   };
 
-  const UpdateTask = async () => {
-    try {
-      const res = await axios.put("http://localhost:5000/update");
-    } catch (err) {
-      console.log("Failed to update task", err);
-    }
-  };
+  // const UpdateTask = async () => {
+  //   try {
+  //     const res = await axios.put("http://localhost:5000/update");
+  //   } catch (err) {
+  //     console.log("Failed to update task", err);
+  //   }
+  // };
 
   useEffect(() => {
     FetchTasks();
@@ -41,11 +40,14 @@ function TaskList() {
           >
             <input
               type="checkbox"
-              checked={isChecked}
-              onChange={(e) => setIsChecked(e.target.checked)}
+              checked={todo.isCompleted}
               value={todo.is_completed}
             />
-            <h3 className={`${isChecked ? "line-through" : ""}`}>
+            <h3
+              className={`${
+                todo.isCompleted ? "line-through text-slate-400" : ""
+              }`}
+            >
               {todo.task}
             </h3>
             <button className="text-3xl">🗑</button>

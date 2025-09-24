@@ -39,7 +39,7 @@ app.get('/getTask', async (req, res) => {
     catch (err) {
         console.log(`Failed to fetch data from DB`);
         res.status(401).json({
-            message: "Enable to fetch tasks from DB"
+            message: "Unable to fetch tasks from DB"
         })
     }
 })
