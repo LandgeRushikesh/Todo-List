@@ -64,3 +64,37 @@ app.post('/add', async (req, res) => {
 
 })
 
+app.put('/update/:id', async (req, res) => {
+    let id = req.params.id
+    try {
+        let task = await Todo.findById(id)
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        task.isCompleted = !task.isCompleted
+        await task.save()
+        res.status(201).json({
+            message: "Task updated Successfully",
+            data: task
+        })
+    }
+    catch (err) {
+        res.status(400).json({
+            message: "Error occured while updating a task"
+        })
+    }
+})
+
+app.delete('/delete/:id', async (req, res) => {
+    try {
+        await Todo.findByIdAndDelete({ _id: req.params.id })
+        res.status(200).json({
+            message: "Task deleted Successfully..."
+        })
+    }
+    catch (err) {
+        res.status(400).json({
+            message: "Failed to Delete task..."
+        })
+    }
+})

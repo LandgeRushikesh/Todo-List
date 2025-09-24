@@ -1,28 +1,31 @@
 import axios from "axios";
+import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import fetchContext from "../Context/fetch";
 
 function TaskList() {
-  const [todos, setTodos] = useState([]);
+  const { todos, FetchTasks } = useContext(fetchContext);
 
-  const FetchTasks = async () => {
+  const UpdateTask = async (id) => {
     try {
-      const res = await axios.get("http://localhost:5000/getTask");
-      console.log("Tasks fetched Successfully", res.data.message);
-
-      setTodos(res.data.data);
+      const res = await axios.put(`http://localhost:5000/update/${id}`);
+      console.log("Tasks updated Successfully", res.data.message);
+      FetchTasks();
     } catch (err) {
-      console.log("Error while fetching tasks", err);
+      console.log("Failed to update task", err);
     }
   };
 
-  // const UpdateTask = async () => {
-  //   try {
-  //     const res = await axios.put("http://localhost:5000/update");
-  //   } catch (err) {
-  //     console.log("Failed to update task", err);
-  //   }
-  // };
+  const deleteTask = async (id) => {
+    try {
+      const res = await axios.delete(`http://localhost:5000/delete/${id}`);
+      console.log("Tasks deleted Successfully", res.data.message);
+      FetchTasks();
+    } catch (err) {
+      console.log("Failed to delete task...", err);
+    }
+  };
 
   useEffect(() => {
     FetchTasks();
@@ -30,10 +33,10 @@ function TaskList() {
 
   return (
     <div className="todoList">
-      {todos.length === 0 ? (
+      {todos?.length === 0 ? (
         <h2>No Records</h2>
       ) : (
-        todos.map((todo) => (
+        todos?.map((todo) => (
           <div
             key={todo._id}
             className="todo w-[40vw] bg-black text-white my-4 py-3 px-4 rounded-lg font-serif font-bold text-xl flex justify-between items-center"
@@ -41,7 +44,8 @@ function TaskList() {
             <input
               type="checkbox"
               checked={todo.isCompleted}
-              value={todo.is_completed}
+              value={todo.isCompleted}
+              onChange={() => UpdateTask(todo._id)}
             />
             <h3
               className={`${
@@ -50,7 +54,16 @@ function TaskList() {
             >
               {todo.task}
             </h3>
-            <button className="text-3xl">🗑</button>
+            <button
+              className="text-3xl"
+              onClick={() =>
+                !todo.isCompleted
+                  ? alert("Task is not Completed...")
+                  : deleteTask(todo._id)
+              }
+            >
+              🗑
+            </button>
           </div>
         ))
       )}

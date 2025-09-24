@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useContext } from "react";
+import fetchContext from "../Context/fetch";
 
 function Input() {
   const [task, setTask] = useState();
+  const { FetchTasks } = useContext(fetchContext);
+
   const HandleAdd = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:5000/add", { task: task });
       console.log("task added successfully", res.data.message);
-
+      FetchTasks();
       setTask("");
     } catch (err) {
       console.log(`Error in posting data : ${err}`);
